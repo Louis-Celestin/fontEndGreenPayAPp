@@ -176,7 +176,7 @@ const DemandeDetail = () => {
       {demande.agent_id == utilisateurId &&
         !demande.statut.includes("validation") && (
           <div className="mt-6 flex gap-4">
-            <Button
+            {/* <Button
               size="sm"
               variant="primary"
               onClick={() => navigate(`/editDemande/${demande.id}`)}
@@ -185,7 +185,7 @@ const DemandeDetail = () => {
             </Button>
             <Button size="sm" variant="danger" onClick={handleDelete}>
               Supprimer
-            </Button>
+            </Button> */}
           </div>
         )}
     </div>

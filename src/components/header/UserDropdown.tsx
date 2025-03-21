@@ -6,8 +6,8 @@ import { logout } from "../../services/authServices/Authervices.jsx";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const user_email = localStorage.getItem("user_email")
-  const agent_nom = localStorage.getItem("agent_nom")
+  const user_email = localStorage.getItem("user_email");
+  const agent_nom = localStorage.getItem("agent_nom");
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -26,7 +26,9 @@ export default function UserDropdown() {
           <img src="/images/user/owner.jpg" alt="User" />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">{agent_nom}</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          {agent_nom}
+        </span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -63,7 +65,7 @@ export default function UserDropdown() {
 
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>
-            <DropdownItem
+            {/* <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
               to="/profile"
@@ -135,7 +137,7 @@ export default function UserDropdown() {
                 />
               </svg>
               Support
-            </DropdownItem>
+            </DropdownItem> */}
           </li>
         </ul>
         <Link

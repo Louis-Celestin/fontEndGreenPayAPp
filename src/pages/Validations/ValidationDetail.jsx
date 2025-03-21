@@ -49,14 +49,16 @@ const DemandeDetail = () => {
     });
 
     if (commentaire) {
-      console.log(commentaire)
-      await rejeterDemande(demande_id, utilisateurId, commentaire).then((res)=>{
-        if(res){
-          console.log("OK")
-        }else{
-          console.log("NOK")
-        }
-      }).catch(err=>console.log(err))
+      console.log(commentaire);
+      await rejeterDemande(demande_id, utilisateurId, commentaire)
+        .then((res) => {
+          if (res) {
+            console.log("OK");
+          } else {
+            console.log("NOK");
+          }
+        })
+        .catch((err) => console.log(err));
       Swal.fire("Rejetée !", "La demande a été rejetée.", "success");
       navigate("/listeValidationsDone");
     }
@@ -78,9 +80,35 @@ const DemandeDetail = () => {
           <p><strong>Statut :</strong> {demande.statut}</p>
           <p><strong>Demandeur :</strong> {demande.agents.nom}</p>
         </div>
+
+        <div className="p-5 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Proforma</h3>
+          {demande.proformas.length > 0 ? (
+            <div className="flex flex-col items-center">
+              <a
+                href={demande.proformas[0].fichier}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-500 hover:underline text-sm"
+              >
+                Voir la proforma complète
+              </a>
+              <div className="mt-3">
+                <img
+                  src={demande.proformas[0].fichier}
+                  alt="Proforma"
+                  className="w-48 h-auto rounded-lg shadow-md"
+                />
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-600 dark:text-gray-400">Aucune proforma disponible.</p>
+          )}
+        </div>
       </div>
 
-      <div className="mt-4 flex gap-4">
+      {/* ✅ Boutons alignés sous les deux sections */}
+      <div className="mt-6 flex justify-center gap-4">
         <Button onClick={handleValidation}>✅ Valider</Button>
         <Button variant="danger" onClick={handleRejet}>❌ Rejeter</Button>
       </div>

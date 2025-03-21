@@ -49,9 +49,9 @@ const columns = (handleDelete, navigate) => [
         <Button size="xs" onClick={() => navigate(`/demandes/${row.id}`)}>
           Voir
         </Button>
-        <Button size="xs" variant="danger" onClick={() => handleDelete(row.id)}>
+        {/* <Button size="xs" variant="danger" onClick={() => handleDelete(row.id)}>
           Supprimer
-        </Button>
+        </Button> */}
       </div>
     ),
     ignoreRowClick: true,

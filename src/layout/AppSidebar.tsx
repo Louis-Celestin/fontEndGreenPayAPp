@@ -17,11 +17,11 @@ const getNavItemsByRole = (role) => {
 
   if (
     [
-      "Agent",
-      "Responsable de section",
-      "Responsable d'entité",
-      "Responsable Entité Financière",
-      "Responsable Entité Générale",
+      "agent",
+      "responsable de section",
+      "responsable d'entité",
+      "responsable entité financière",
+      "responsable entité générale",
     ].includes(role)
   ) {
     menu.push({
@@ -36,10 +36,10 @@ const getNavItemsByRole = (role) => {
 
   if (
     [
-      "Responsable de section",
-      "Responsable d'entité",
+      "responsable de section",
+      "responsable d'entité",
       // "Responsable Entité Financière",
-      "Responsable Entité Générale",
+      "responsable entité générale",
     ].includes(role)
   ) {
     menu.push({
@@ -52,7 +52,7 @@ const getNavItemsByRole = (role) => {
     });
   }
 
-  if (["Responsable Entité Financière"].includes(role)) {
+  if (["responsable entité financière"].includes(role)) {
     menu.push(
       {
         name: "Paiements",

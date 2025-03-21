@@ -17,12 +17,12 @@ export default function ValidationsDone() {
         const response = await getValidationsByDemande(utilisateurId);
         setValidations(response);
       } catch (error) {
-        Swal.fire({
-          title: "Erreur",
-          text: "Vous n'avez effectué aucune validation.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
+        // Swal.fire({
+        //   title: "Erreur",
+        //   text: "Vous n'avez effectué aucune validation.",
+        //   icon: "error",
+        //   confirmButtonText: "OK",
+        // });
       } finally {
         setLoading(false);
       }
