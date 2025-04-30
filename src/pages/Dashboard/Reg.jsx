@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Chart from "react-apexcharts";
+import API_URL from "../../config/url";
 
 export default function DashboardDG() {
   const [stats, setStats] = useState(null);
@@ -8,7 +9,7 @@ export default function DashboardDG() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/demandes/stats/Reg", {
+      .get(`${API_URL}/demandes/stats/Reg`, {
         headers: { Authorization: "Bearer " + token },
       })
       .then((response) => setStats(response.data))

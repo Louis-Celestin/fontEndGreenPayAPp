@@ -1,7 +1,6 @@
 import axios from "axios";
-
+import  API_URL  from "../../config/url"; // Assurez-vous que le chemin est correct
 // URL de base de l'API backend
-const API_URL = "http://localhost:5000/api/validations";
 
 /**
  * ✅ Récupérer les demandes en attente de validation pour l'utilisateur connecté
@@ -11,7 +10,7 @@ const API_URL = "http://localhost:5000/api/validations";
 export const getDemandesEnAttente = async (validateur_id) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/en_attente/${validateur_id}`, {
+    const response = await axios.get(`${API_URL}/validations/en_attente/${validateur_id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data.demandes;
@@ -30,7 +29,7 @@ export const validerDemande = async (demande_id, valideur_id) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.post(
-      `${API_URL}/${demande_id}/valider`,
+      `${API_URL}/validations/${demande_id}/valider`,
       { valideur_id, statut: "approuve" },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -54,7 +53,7 @@ export const rejeterDemande = async (demande_id, valideur_id, commentaire) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.post(
-      `${API_URL}/${demande_id}/valider`,
+      `${API_URL}/validations/${demande_id}/valider`,
       { valideur_id, statut: "rejete", commentaire },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -73,7 +72,7 @@ export const rejeterDemande = async (demande_id, valideur_id, commentaire) => {
 export const getValidationsByDemande = async (validateur_id) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/getValidationsByValidateur/${validateur_id}`, {
+    const response = await axios.get(`${API_URL}/validations/getValidationsByValidateur/${validateur_id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

@@ -1,7 +1,7 @@
 import axios from "axios";
+import API_URL  from "../../config/url"; // URL de base de l'API
 
 // 🔹 Définition de l'URL de base de l'API
-const API_URL = "http://localhost:5000/api/demandes"; 
 
 // ✅ Créer une demande de paiement
 // export const createDemande = async (formData) => {
@@ -38,7 +38,7 @@ const API_URL = "http://localhost:5000/api/demandes";
 export const createDemande = async (formData) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(`${API_URL}/createDemandePaiement`, formData, {
+      const response = await axios.post(`${API_URL}/demandes/createDemandePaiement`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data", // ✅ Indiquer qu'on envoie un fichier
@@ -56,7 +56,7 @@ export const getDemandes = async (utilisateur_id, page) => {
     try {
       const token = localStorage.getItem("token");
   
-      const response = await axios.get(`${API_URL}/getDemandePaiement`, {
+      const response = await axios.get(`${API_URL}/demandes/getDemandePaiement`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { utilisateur_id, page },
       });
@@ -71,7 +71,7 @@ export const getDemandes = async (utilisateur_id, page) => {
 export const getDemandeById = async (demandeId) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/${demandeId}`, {
+    const response = await axios.get(`${API_URL}/demandes/getDemandePaiementById/${demandeId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -84,20 +84,28 @@ export const getDemandeById = async (demandeId) => {
 export const updateDemande = async (demandeId, updatedData) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.put(`${API_URL}/${demandeId}`, updatedData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axios.put(
+      `${API_URL}/demandes/modifyDemandePaiement/${demandeId}`,
+      updatedData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // important pour FormData
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Erreur lors de la modification de la demande";
   }
 };
 
+
 // ✅ Supprimer (soft delete) une demande
 export const deleteDemande = async (demandeId) => {
   try {
     const token = localStorage.getItem("token");
-    await axios.delete(`${API_URL}/${demandeId}`, {
+    await axios.delete(`${API_URL}/demandes/deleteDemandePaiement/${demandeId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return { message: "Demande supprimée avec succès" };

@@ -1,9 +1,6 @@
 import axios from "axios";
-
+import API_URL  from "../../config/url"; // Assurez-vous d'importer les URL de l'API depuis un fichier de configuration
 // URL de l'API backend
-const API_URL = "http://localhost:5000/api/paiements";
-const API_URL_VALIDATIONS = "http://localhost:5000/api/validations";
-const API_URL_DEMANDES = "http://localhost:5000/api/demandes";
 
 // ✅ Récupérer les paiements en attente
 // export const getPaiementsEnAttente = async (DAF_id) => {
@@ -108,7 +105,7 @@ const API_URL_DEMANDES = "http://localhost:5000/api/demandes";
 export const getPaiementsEnAttente = async (DAF_id) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL_VALIDATIONS}/en_attente/${DAF_id}`, {
+    const response = await axios.get(`${API_URL}/validations/en_attente/${DAF_id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data.demandes;
@@ -122,7 +119,7 @@ export const getPaiementsEnAttente = async (DAF_id) => {
 export const getDemandeById = async (demandeId) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL_DEMANDES}/${demandeId}`, {
+    const response = await axios.get(`${API_URL}/demandes/${demandeId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -136,7 +133,7 @@ export const getDemandeById = async (demandeId) => {
 export const getPaiementsEffectues = async () => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}`, {
+    const response = await axios.get(`${API_URL}/paiements`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -150,7 +147,7 @@ export const getPaiementsEffectues = async () => {
 export const effectuerPaiement = async (id, formData) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.post(`${API_URL}/effectuerPaiement/${id}`, formData, {
+    const response = await axios.post(`${API_URL}/paiements/effectuerPaiement/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -168,7 +165,7 @@ export const reporterPaiement = async (demande_id, commentaire) => {
   try {
     const valideur_id = localStorage.getItem("user_id");
     const token = localStorage.getItem("token");
-    const response = await axios.post(`${API_URL_VALIDATIONS}/${demande_id}/valider`, 
+    const response = await axios.post(`${API_URL}/validations/${demande_id}/valider`, 
       { statut: "en_attente_paiement", commentaire, valideur_id }, 
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -184,7 +181,7 @@ export const validerPaiement = async (demande_id) => {
   try {
     const valideur_id = localStorage.getItem("user_id");
     const token = localStorage.getItem("token");
-    const response = await axios.post(`${API_URL_VALIDATIONS}/${demande_id}/valider`, 
+    const response = await axios.post(`${API_URL}/validations/${demande_id}/valider`, 
       { statut: "paye", valideur_id }, 
       { headers: { Authorization: `Bearer ${token}` } }
     );

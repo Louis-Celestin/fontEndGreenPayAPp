@@ -1,82 +1,187 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getValidationsByDemande } from "../../services/validationsServices/validationServices";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
-import Button from "../../components/ui/button/Button";
-import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaCheckCircle, FaTimesCircle, FaInfo } from "react-icons/fa";
+import API_URL from "../../config/url";
 
 export default function ValidationsDone() {
   const [validations, setValidations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const utilisateurId = localStorage.getItem("user_id");
+  const [filteredData, setFilteredData] = useState([]);
+
+  const [filtreMotif, setFiltreMotif] = useState("");
+  const [filtreBenef, setFiltreBenef] = useState("");
+  const [filtreStatut, setFiltreStatut] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchValidations = async () => {
-      try {
-        const response = await getValidationsByDemande(utilisateurId);
-        setValidations(response);
-      } catch (error) {
-        // Swal.fire({
-        //   title: "Erreur",
-        //   text: "Vous n'avez effectué aucune validation.",
-        //   icon: "error",
-        //   confirmButtonText: "OK",
-        // });
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchValidations();
-  }, [utilisateurId]);
+  const utilisateur_id = localStorage.getItem("user_id");
 
-  // ✅ Définition des colonnes pour react-data-table
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await getValidationsByDemande(utilisateur_id);
+      setValidations(response);
+      setFilteredData(response);
+    } catch (error) {
+      Swal.fire("Erreur", "Impossible de charger les validations.", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // 🔎 Appliquer les filtres
+  useEffect(() => {
+    let filtered = validations;
+    console.log(filtered)
+
+    if (filtreMotif)
+      filtered = filtered.filter((v) =>
+        v.demandes_paiement.motif.toLowerCase().includes(filtreMotif.toLowerCase())
+      );
+
+    if (filtreBenef)
+      filtered = filtered.filter((v) =>
+        v.demandes_paiement.beneficiaire.toLowerCase().includes(filtreBenef.toLowerCase())
+      );
+
+    if (filtreStatut)
+      filtered = filtered.filter((v) => v.statut === filtreStatut);
+
+    if (startDate)
+      filtered = filtered.filter((v) => new Date(v.date_validation) >= startDate);
+
+    if (endDate)
+      filtered = filtered.filter((v) => new Date(v.date_validation) <= endDate);
+
+    setFilteredData(filtered);
+  }, [filtreMotif, filtreBenef, filtreStatut, startDate, endDate, validations]);
+
   const columns = [
-    { name: "ID Validation", selector: (row) => row.id, sortable: true, },
-    { name: "ID Demande", selector: (row) => row.demande_id, sortable: true,},
-    { name: "Montant (FCFA)", selector: (row) => row.demandes_paiement.montant, sortable: true, right: true },
-    { name: "Bénéficiaire", selector: (row) => row.demandes_paiement.beneficiaire, sortable: true },
-    { name: "Statut", selector: (row) => row.statut, sortable: true, 
+    {
+      name: "ID",
+      selector: (row) => row.demandes_paiement.id,
+      sortable: true,
+      width: "80px",
+    },
+    {
+      name: "Motif",
+      selector: (row) => row.demandes_paiement.motif,
+    },
+    {
+      name: "Montant",
+      selector: (row) => `${row.demandes_paiement.montant} FCFA`,
+    },
+    {
+      name: "Bénéficiaire",
+      selector: (row) => row.demandes_paiement.beneficiaire,
+    },
+    {
+      name: "Statut",
+      selector: (row) => row.statut,
       cell: (row) => (
-        <span
-          className={`px-2 py-1 text-sm rounded ${
-            row.statut === "approuve" ? "bg-green-100 text-green-700" :
-            row.statut === "rejete" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
-          }`}
-        >
+        <span className={`px-2 py-1 rounded-full text-sm font-medium ${
+          row.statut === "approuve" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+        }`}>
+          {row.statut === "approuve" ? <FaCheckCircle className="inline mr-1" /> : <FaTimesCircle className="inline mr-1" />}
           {row.statut}
         </span>
       ),
     },
     {
-      name: "Commentaire",
-      selector: (row) => row.commentaire || "Aucun",
+      name: "Date validation",
+      selector: (row) => new Date(row.date_validation).toLocaleDateString("fr-FR"),
       sortable: true,
     },
     {
-      name: "Actions",
+      name: "Action",
       cell: (row) => (
-        <Button size="xs" onClick={() => navigate(`/demandes/${row.demande_id}`)}>
-          🔍 Voir Demande
-        </Button>
+        <button
+          className="text-blue-500 hover:text-blue-700"
+          onClick={() => navigate(`/demandes/${row.demande_id}`)}
+          title="Voir la demande"
+        >
+          <FaInfo />
+        </button>
       ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
+      width: "80px",
     },
   ];
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Mes validations effectuées</h2>
-      
+    <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-50 shadow-lg rounded-lg">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        Liste des validations effectuées
+      </h2>
+
+      {/* Filtres */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Motif"
+          value={filtreMotif}
+          onChange={(e) => setFiltreMotif(e.target.value)}
+          className="p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Bénéficiaire"
+          value={filtreBenef}
+          onChange={(e) => setFiltreBenef(e.target.value)}
+          className="p-2 border rounded"
+        />
+        <select
+          value={filtreStatut}
+          onChange={(e) => setFiltreStatut(e.target.value)}
+          className="p-2 border rounded"
+        >
+          <option value="">Tous les statuts</option>
+          <option value="approuve">Approuvé</option>
+          <option value="rejete">Rejeté</option>
+        </select>
+      </div>
+
+      {/* Filtres par date */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label className="block text-sm font-medium mb-1">Date de début</label>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            dateFormat="dd/MM/yyyy"
+            className="w-full p-2 border rounded"
+            placeholderText="Sélectionner"
+            isClearable
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Date de fin</label>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            dateFormat="dd/MM/yyyy"
+            className="w-full p-2 border rounded"
+            placeholderText="Sélectionner"
+            isClearable
+          />
+        </div>
+      </div>
+
       <DataTable
         columns={columns}
-        data={validations}
+        data={filteredData}
         progressPending={loading}
         pagination
         paginationPerPage={5}
-        paginationTotalRows={validations.length}
         highlightOnHover
         striped
         responsive

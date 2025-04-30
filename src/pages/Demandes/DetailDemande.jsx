@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
+import API_URL from "../../config/url";
 
 const DemandeDetail = () => {
   const { id } = useParams(); // Récupère l'ID depuis l'URL
@@ -18,7 +19,7 @@ const DemandeDetail = () => {
     const fetchDemandeDetail = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/demandes/getDemandePaiementById/${id}`
+          `${API_URL}/demandes/getDemandePaiementById/${id}`
         );
         setDemande(response.data.demande);
       } catch (err) {

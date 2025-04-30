@@ -2,24 +2,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useState, useEffect } from "react";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { isAuthenticated } from "./services/authServices/Authervices.jsx";
 import AuthGuard from "./components/authGuard/AuthGuard.jsx";
 import CreateDemande from "./pages/Demandes/CreateDemande.jsx";
+import DemandeEdit from "./pages/Demandes/DemandeEdit.jsx";
 import ListeDemandes from "./pages/Demandes/ListeDemandes.jsx";
 import DetailDemande from "./pages/Demandes/DetailDemande.jsx";
 import ValidationsPending from "./pages/Validations/ValidationPending.jsx";
@@ -73,6 +61,7 @@ export default function App() {
         <Route element={<AuthGuard />}>
           <Route element={<AppLayout />}>
             <Route path="/createDemande" element={<CreateDemande />} />
+            <Route path="/demandeEdit/:id" element={<DemandeEdit />} />
             <Route path="/listeDemandes" element={<ListeDemandes />} />
             <Route path="/demandes/:id" element={<DetailDemande />} />
             <Route path="/validationsPending" element={<ValidationsPending />} />

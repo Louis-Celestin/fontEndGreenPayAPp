@@ -4,11 +4,13 @@ import { validerDemande, rejeterDemande } from "../../services/validationsServic
 import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
 import axios from "axios";
+import { ClipLoader } from "react-spinners"; // ✅ Loader visuel
 
 const DemandeDetail = () => {
   const { demande_id } = useParams();
   const [demande, setDemande] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false); // ✅ Nouveau pour action de validation/rejet
   const [error, setError] = useState("");
   const utilisateurId = localStorage.getItem("user_id");
   const navigate = useNavigate();
@@ -18,9 +20,9 @@ const DemandeDetail = () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/demandes/getDemandePaiementById/${demande_id}`);
         setDemande(response.data.demande);
-        setLoading(false);
       } catch (err) {
         setError("Erreur lors du chargement de la demande.");
+      } finally {
         setLoading(false);
       }
     };
@@ -29,12 +31,15 @@ const DemandeDetail = () => {
   }, [demande_id]);
 
   const handleValidation = async () => {
+    setActionLoading(true); // ✅ Active le loader action
     try {
       await validerDemande(demande_id, utilisateurId);
       Swal.fire("Validé !", "La demande a été approuvée.", "success");
       navigate("/listeValidationsDone");
-    } catch (error) {
+    } catch {
       Swal.fire("Erreur", "Impossible de valider la demande.", "error");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -44,32 +49,42 @@ const DemandeDetail = () => {
       input: "textarea",
       inputLabel: "Commentaire",
       inputPlaceholder: "Indiquez la raison du rejet...",
-      inputAttributes: { "aria-label": "Écrivez ici" },
       showCancelButton: true,
     });
 
     if (commentaire) {
-      console.log(commentaire);
-      await rejeterDemande(demande_id, utilisateurId, commentaire)
-        .then((res) => {
-          if (res) {
-            console.log("OK");
-          } else {
-            console.log("NOK");
-          }
-        })
-        .catch((err) => console.log(err));
-      Swal.fire("Rejetée !", "La demande a été rejetée.", "success");
-      navigate("/listeValidationsDone");
+      setActionLoading(true); // ✅ Active le loader action
+      try {
+        await rejeterDemande(demande_id, utilisateurId, commentaire);
+        Swal.fire("Rejetée !", "La demande a été rejetée.", "success");
+        navigate("/listeValidationsDone");
+      } catch {
+        Swal.fire("Erreur", "Impossible de rejeter la demande.", "error");
+      } finally {
+        setActionLoading(false);
+      }
     }
   };
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader color="#0d6efd" size={50} loading={loading} />
+      </div>
+    );
+  }
+
   if (error) return <p className="text-red-500">{error}</p>;
   if (!demande) return <p>Aucune demande trouvée.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="relative max-w-5xl mx-auto p-6">
+      {actionLoading && (
+        <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
+          <ClipLoader color="#0d6efd" size={50} />
+        </div>
+      )}
+
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Détail de la Demande #{demande.id}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

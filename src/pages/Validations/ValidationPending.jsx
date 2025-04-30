@@ -1,82 +1,98 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDemandesEnAttente, validerDemande, rejeterDemande } from "../../services/validationsServices/validationServices";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
-import Button from "../../components/ui/button/Button";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaCheck, FaTimesCircle, FaInfo } from "react-icons/fa";
+import { getDemandesEnAttente, validerDemande, rejeterDemande } from "../../services/validationsServices/validationServices";
+import { ClipLoader } from "react-spinners"; // ✅ Ajout du loader
 
 export default function ValidationsPending() {
   const [demandes, setDemandes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false); // ✅ Loader pour actions
   const utilisateurId = localStorage.getItem("user_id");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDemandes = async () => {
-      try {
-        const response = await getDemandesEnAttente(utilisateurId);
-        setDemandes(response);
-      } catch (error) {
-        Swal.fire({
-          title: "Erreur",
-          text: "Impossible de charger les demandes en attente.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDemandes();
-  }, [utilisateurId]);
+  // Filtres
+  const [filtreStatut, setFiltreStatut] = useState("");
+  const [filtreBenef, setFiltreBenef] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  // ✅ Fonction pour valider une demande
-  const handleValidation = async (id) => {
+  const fetchDemandes = async () => {
+    setLoading(true);
     try {
-      await validerDemande(id, utilisateurId);
-      setDemandes(demandes.filter((demande) => demande.id !== id));
-      Swal.fire("Validé !", "La demande a été approuvée.", "success");
+      const response = await getDemandesEnAttente(utilisateurId);
+      let filtered = response;
+
+      if (filtreStatut) filtered = filtered.filter((d) => d.statut === filtreStatut);
+      if (filtreBenef) filtered = filtered.filter((d) => d.beneficiaire.toLowerCase().includes(filtreBenef.toLowerCase()));
+      if (startDate) filtered = filtered.filter((d) => new Date(d.date_creation) >= new Date(startDate));
+      if (endDate) filtered = filtered.filter((d) => new Date(d.date_creation) <= new Date(endDate));
+
+      setDemandes(filtered);
     } catch (error) {
-      Swal.fire("Erreur", "Impossible de valider la demande.", "error");
+      Swal.fire("Erreur", "Impossible de charger les demandes en attente.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ Fonction pour rejeter une demande avec un commentaire
+  useEffect(() => {
+    fetchDemandes();
+    // eslint-disable-next-line
+  }, [filtreStatut, filtreBenef, startDate, endDate]);
+
+  const handleValidation = async (id) => {
+    setActionLoading(true); // ✅ Début du loader action
+    try {
+      await validerDemande(id, utilisateurId);
+      await fetchDemandes();
+      Swal.fire("✅ Validée", "La demande a été approuvée.", "success");
+    } catch {
+      Swal.fire("❌ Erreur", "Impossible de valider la demande.", "error");
+    } finally {
+      setActionLoading(false); // ✅ Fin du loader action
+    }
+  };
+
   const handleRejet = async (id) => {
     const { value: commentaire } = await Swal.fire({
       title: "Rejeter la demande",
       input: "textarea",
       inputLabel: "Commentaire",
-      inputPlaceholder: "Indiquez la raison du rejet...",
-      inputAttributes: { "aria-label": "Écrivez ici" },
+      inputPlaceholder: "Motif du rejet...",
       showCancelButton: true,
     });
 
     if (commentaire) {
+      setActionLoading(true); // ✅ Début du loader action
       try {
         await rejeterDemande(id, utilisateurId, commentaire);
-        setDemandes(demandes.filter((demande) => demande.id !== id));
-        Swal.fire("Rejetée !", "La demande a été rejetée.", "success");
-      } catch (error) {
-        Swal.fire("Erreur", "Impossible de rejeter la demande.", "error");
+        await fetchDemandes();
+        Swal.fire("🚫 Rejetée", "La demande a été rejetée.", "success");
+      } catch {
+        Swal.fire("❌ Erreur", "Échec du rejet de la demande.", "error");
+      } finally {
+        setActionLoading(false); // ✅ Fin du loader action
       }
     }
   };
 
-  // ✅ Définition des colonnes pour react-data-table
   const columns = [
-    { name: "ID", selector: (row) => row.id, sortable: true, width: "80px" },
-    { name: "Montant (FCFA)", selector: (row) => row.montant, sortable: true, right: true },
+    { name: "ID", selector: (row) => row.id, width: "60px", sortable: true },
+    { name: "Montant", selector: (row) => `${row.montant} FCFA`, sortable: true },
     { name: "Bénéficiaire", selector: (row) => row.beneficiaire, sortable: true },
     {
       name: "Statut",
-      selector: (row) => row.statut,
       cell: (row) => (
-        <span
-          className={`px-2 py-1 text-sm rounded ${
-            row.statut.includes("validation") ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"
-          }`}
-        >
+        <span className={`px-2 py-1 rounded text-sm ${
+          row.statut === "rejete" ? "bg-red-100 text-red-600" :
+          row.statut.includes("validation") ? "bg-yellow-100 text-yellow-700" :
+          "bg-gray-100 text-gray-600"
+        }`}>
           {row.statut}
         </span>
       ),
@@ -84,16 +100,28 @@ export default function ValidationsPending() {
     {
       name: "Actions",
       cell: (row) => (
-        <div className="flex gap-1">
-          <Button size="xs" variant="primary" onClick={() => navigate(`/validations/${row.id}`)}>
-            🔍
-          </Button>
-          <Button size="xs" onClick={() => handleValidation(row.id)}>
-            ✅
-          </Button>
-          <Button size="xs" variant="danger" onClick={() => handleRejet(row.id)}>
-            ❌
-          </Button>
+        <div className="flex gap-2">
+          <button
+            className="text-blue-500 hover:text-blue-700"
+            onClick={() => navigate(`/validations/${row.id}`)}
+            title="Voir"
+          >
+            <FaInfo />
+          </button>
+          <button
+            className="text-green-500 hover:text-green-700"
+            onClick={() => handleValidation(row.id)}
+            title="Valider"
+          >
+            <FaCheck />
+          </button>
+          <button
+            className="text-red-500 hover:text-red-700"
+            onClick={() => handleRejet(row.id)}
+            title="Rejeter"
+          >
+            <FaTimesCircle />
+          </button>
         </div>
       ),
       ignoreRowClick: true,
@@ -103,16 +131,67 @@ export default function ValidationsPending() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Demandes en attente de validation</h2>
-      
+    <div className="relative max-w-6xl mx-auto mt-10 p-6 bg-white shadow rounded">
+      {actionLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-50">
+          <ClipLoader color="#0d6efd" loading={actionLoading} size={50} />
+        </div>
+      )}
+
+      <h2 className="text-xl font-semibold mb-4">Demandes en attente de validation</h2>
+
+      {/* 🔍 Filtres */}
+      <div className="bg-gray-50 p-4 rounded mb-4 grid md:grid-cols-3 gap-4">
+        <div>
+          <label>Statut</label>
+          <select className="w-full border p-2 rounded" value={filtreStatut} onChange={(e) => setFiltreStatut(e.target.value)}>
+            <option value="">-- Tous --</option>
+            <option value="validation_section">Validation Section</option>
+          </select>
+        </div>
+        <div>
+          <label>Bénéficiaire</label>
+          <input
+            type="text"
+            className="w-full border p-2 rounded"
+            value={filtreBenef}
+            onChange={(e) => setFiltreBenef(e.target.value)}
+            placeholder="Filtrer par bénéficiaire"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="block mb-1 font-semibold">Date début</label>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              className="w-full p-2 border rounded"
+              dateFormat="yyyy-MM-dd"
+              placeholderText="Sélectionner une date"
+              isClearable
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold">Date fin</label>
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              className="w-full p-2 border rounded"
+              dateFormat="yyyy-MM-dd"
+              placeholderText="Sélectionner une date"
+              isClearable
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 📄 Tableau */}
       <DataTable
         columns={columns}
         data={demandes}
         progressPending={loading}
-        paginationPerPage={5}
-        paginationTotalRows={demandes.length}
         pagination
+        paginationPerPage={5}
         highlightOnHover
         striped
         responsive

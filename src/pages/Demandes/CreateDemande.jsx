@@ -5,102 +5,25 @@ import { createDemande } from "../../services/demandesServices/demandeService";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
-import FileUpload from "../../components/form/input/FileInput"; // Composant pour gérer les fichiers
+import FileUpload from "../../components/form/input/FileInput";
+import { ClipLoader } from "react-spinners"; // ✅ Utilisation de react-spinners directement
 
 export default function CreateDemande() {
   const navigate = useNavigate();
 
-  // ✅ États pour gérer les champs du formulaire
   const [montant, setMontant] = useState("");
   const [motif, setMotif] = useState("");
   const [beneficiaire, setBeneficiaire] = useState("");
   const [requiertProforma, setRequiertProforma] = useState(false);
   const [proforma, setProforma] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const agent_id = localStorage.getItem("agent_id");
-  // ✅ Fonction pour gérer l’envoi du formulaire
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     // Création d'un objet contenant les données de la demande
-  //     const formData = new FormData();
-  //     formData.append("agent_id", agent_id);
-  //     formData.append("montant", montant);
-  //     formData.append("motif", motif);
-  //     formData.append("beneficiaire", beneficiaire);
-  //     formData.append("requiertProforma", requiertProforma);
-  //     if (proforma) {
-  //       formData.append("proforma", proforma); // Ajouter le fichier à FormData
-  //     }
-  //     console.log(formData);
-  //     await createDemande(formData);
-
-  //     // ✅ Notification SweetAlert2 en cas de succès
-  //     Swal.fire({
-  //       title: "Succès !",
-  //       text: "Votre demande de paiement a été créée avec succès.",
-  //       icon: "success",
-  //       confirmButtonText: "OK",
-  //       confirmButtonColor: "#28a745",
-  //     }).then(() => navigate("/listeDemandes")); // Redirection après validation
-  //   } catch (error) {
-  //     Swal.fire({
-  //       title: "Erreur !",
-  //       text: "Une erreur s'est produite lors de la création de la demande.",
-  //       icon: "error",
-  //       confirmButtonText: "OK",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     // Création de FormData pour inclure le fichier
-  //     const formData = new FormData();
-  //     formData.append("agent_id", agent_id);
-  //     formData.append("montant", montant);
-  //     formData.append("motif", motif);
-  //     formData.append("beneficiaire", beneficiaire);
-  //     formData.append("requiertProforma", requiertProforma);
-  //     if (proforma) {
-  //       formData.append("proforma", proforma);
-  //     }
-
-  //     console.log([...formData]); // ✅ Debug : Voir les données envoyées
-
-  //     await createDemande(formData); // Appel API
-
-  //     // ✅ Notification SweetAlert2 en cas de succès
-  //     Swal.fire({
-  //       title: "Succès !",
-  //       text: "Votre demande de paiement a été créée avec succès.",
-  //       icon: "success",
-  //       confirmButtonText: "OK",
-  //       confirmButtonColor: "#28a745",
-  //     }).then(() => navigate("/listeDemandes"));
-  //   } catch (error) {
-  //     Swal.fire({
-  //       title: "Erreur !",
-  //       text: "Une erreur s'est produite lors de la création de la demande.",
-  //       icon: "error",
-  //       confirmButtonText: "OK",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       const formData = new FormData();
       formData.append("agent_id", agent_id);
@@ -108,21 +31,17 @@ export default function CreateDemande() {
       formData.append("motif", motif);
       formData.append("beneficiaire", beneficiaire);
       formData.append("requiert_proforma", requiertProforma);
-      if (proforma) {
-        formData.append("proforma", proforma); // ✅ Ajout du fichier
-      }
-  
-      console.log([...formData]); // ✅ Debugging pour voir les données
-  
-      await createDemande(formData); // Envoi des données à l'API
-  
+      if (proforma) formData.append("proforma", proforma);
+
+      await createDemande(formData);
+
       Swal.fire({
         title: "Succès !",
         text: "Votre demande de paiement a été créée avec succès.",
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => navigate("/listeDemandes"));
-  
+
     } catch (error) {
       Swal.fire({
         title: "Erreur !",
@@ -134,20 +53,23 @@ export default function CreateDemande() {
       setLoading(false);
     }
   };
-  
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="relative max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      {/* Loader en overlay si loading */}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg z-50">
+          <ClipLoader size={45} color="#4F46E5" loading={loading} />
+        </div>
+      )}
+
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Créer une demande de paiement
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* 🔹 Montant */}
         <div>
-          <Label>
-            Montant (FCFA) <span className="text-error-500">*</span>
-          </Label>
+          <Label>Montant (FCFA) <span className="text-red-500">*</span></Label>
           <Input
             type="number"
             placeholder="Entrez le montant"
@@ -157,11 +79,8 @@ export default function CreateDemande() {
           />
         </div>
 
-        {/* 🔹 Motif */}
         <div>
-          <Label>
-            Motif <span className="text-error-500">*</span>
-          </Label>
+          <Label>Motif <span className="text-red-500">*</span></Label>
           <Input
             type="text"
             placeholder="Entrez le motif"
@@ -171,11 +90,8 @@ export default function CreateDemande() {
           />
         </div>
 
-        {/* 🔹 Bénéficiaire */}
         <div>
-          <Label>
-            Bénéficiaire <span className="text-error-500">*</span>
-          </Label>
+          <Label>Bénéficiaire <span className="text-red-500">*</span></Label>
           <Input
             type="text"
             placeholder="Nom du bénéficiaire"
@@ -185,7 +101,6 @@ export default function CreateDemande() {
           />
         </div>
 
-        {/* 🔹 Checkbox pour la proforma */}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -195,25 +110,15 @@ export default function CreateDemande() {
           <Label>Cette demande nécessite une proforma</Label>
         </div>
 
-        {/* 🔹 Upload du fichier proforma si nécessaire */}
         {requiertProforma && (
           <div>
-            <Label>
-              Joindre la proforma (PDF/Image){" "}
-              <span className="text-error-500">*</span>
-            </Label>
-            <FileUpload
-              onFileSelect={(file) => {
-                console.log("Fichier sélectionné :", file); // ✅ Debugging
-                setProforma(file);
-              }}
-            />
+            <Label>Joindre la proforma (PDF/Image)</Label>
+            <FileUpload onFileSelect={(file) => setProforma(file)} />
           </div>
         )}
 
-        {/* 🔹 Bouton de soumission */}
         <div>
-          <Button type="submit" className="w-full" size="sm" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Envoi en cours..." : "Créer la demande"}
           </Button>
         </div>

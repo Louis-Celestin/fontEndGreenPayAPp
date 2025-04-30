@@ -25,11 +25,11 @@ const getNavItemsByRole = (role) => {
     ].includes(role)
   ) {
     menu.push({
-      name: "Demandes de paiements",
+      name: "Demandes d'achats",
       icon: <PageIcon />,
       subItems: [
         { name: "Nouvelle demande", path: "/createDemande" },
-        { name: "Liste des demandes", path: "/listeDemandes" },
+        { name: "Liste de mes demandes", path: "/listeDemandes" },
       ],
     });
   }
@@ -39,7 +39,7 @@ const getNavItemsByRole = (role) => {
       "responsable de section",
       "responsable d'entité",
       // "Responsable Entité Financière",
-      "responsable entité générale",
+      // "responsable entité générale",
     ].includes(role)
   ) {
     menu.push({
@@ -52,18 +52,18 @@ const getNavItemsByRole = (role) => {
     });
   }
 
-  if (["responsable entité financière"].includes(role)) {
-    menu.push(
-      {
-        name: "Paiements",
-        icon: <PageIcon />,
-        subItems: [
-          { name: "Liste de paiements", path: "/listePaiements" },
-          { name: "Paiements effectués", path: "/paiementsDone" },
-        ],
-      },
-    );
-  }
+  // if (["responsable entité financière"].includes(role)) {
+  //   menu.push(
+  //     {
+  //       name: "Paiements",
+  //       icon: <PageIcon />,
+  //       subItems: [
+  //         { name: "Liste de paiements", path: "/listePaiements" },
+  //         { name: "Paiements effectués", path: "/paiementsDone" },
+  //       ],
+  //     },
+  //   );
+  // }
 
   return menu;
 };
@@ -129,14 +129,13 @@ const AppSidebar = () => {
         <Link to="/">
           <img
             className="dark:hidden"
-            src="/images/logo/logo.svg"
-            alt="Logo"
+            src="https://res.cloudinary.com/digitkbit/image/upload/v1744802840/logo_bdj4ks.png"
             width={150}
             height={40}
           />
           <img
             className="hidden dark:block"
-            src="/images/logo/logo-dark.svg"
+            src="https://res.cloudinary.com/digitkbit/image/upload/v1744802840/logo_bdj4ks.png"
             alt="Logo"
             width={150}
             height={40}

@@ -21,12 +21,12 @@ export default function AuthLayout({
                 <img
                   width={231}
                   height={48}
-                  src="/images/logo/auth-logo.svg"
+                  src="https://res.cloudinary.com/digitkbit/image/upload/v1744802840/logo_bdj4ks.png"
                   alt="Logo"
                 />
               </Link>
               <p className="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+                Gestion des demandes d'achats
               </p>
             </div>
           </div>
