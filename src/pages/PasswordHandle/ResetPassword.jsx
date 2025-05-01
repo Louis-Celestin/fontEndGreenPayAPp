@@ -5,6 +5,7 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons/index.js";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button.js";
+import PageMeta from "../../components/common/PageMeta.js";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -36,6 +37,8 @@ export default function ResetPassword() {
   };
 
   return (
+    <>
+      <PageMeta title="Réinitialiser le mot de passe" description="Réinitialisez votre mot de passe" />
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto">
         <button
@@ -43,16 +46,16 @@ export default function ResetPassword() {
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon className="size-5" />
-          Back to login
+          Retour à la connexion
         </button>
       </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-            Reset Password
+            Réinitialiser le mot de passe
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Enter your new password below.
+            Entrez votre nouveau mot de passe.
           </p>
           {message && <p className="text-green-500">{message}</p>}
           {error && <p className="text-red-500">{error}</p>}
@@ -60,11 +63,11 @@ export default function ResetPassword() {
           <form onSubmit={handleResetPassword}>
             <div className="space-y-6">
               <div>
-                <Label>New Password <span className="text-error-500">*</span></Label>
+                <Label>Nouveau mot de passe <span className="text-error-500">*</span></Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your new password"
+                    placeholder="Entrez votre mot de passe"
                     value={motDePasse}
                     onChange={(e) => setMotDePasse(e.target.value)}
                     required
@@ -79,10 +82,10 @@ export default function ResetPassword() {
               </div>
 
               <div>
-                <Label>Confirm Password <span className="text-error-500">*</span></Label>
+                <Label>Confirmation du nouveau mot de passe <span className="text-error-500">*</span></Label>
                 <Input
                   type="password"
-                  placeholder="Confirm your new password"
+                  placeholder="Confirmez votre mot de passe"
                   value={confirmMotDePasse}
                   onChange={(e) => setConfirmMotDePasse(e.target.value)}
                   required
@@ -91,7 +94,7 @@ export default function ResetPassword() {
 
               <div>
                 <Button className="w-full" size="sm" type="submit">
-                  Reset Password
+                  Réinitialiser le mot de passe
                 </Button>
               </div>
             </div>
@@ -99,5 +102,6 @@ export default function ResetPassword() {
         </div>
       </div>
     </div>
+    </>
   );
 }

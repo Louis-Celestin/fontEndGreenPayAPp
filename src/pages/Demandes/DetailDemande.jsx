@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
 import API_URL from "../../config/url";
+import PageMeta from "../../components/common/PageMeta";
 
 const DemandeDetail = () => {
   const { id } = useParams(); // Récupère l'ID depuis l'URL
@@ -48,7 +49,7 @@ const DemandeDetail = () => {
     if (confirm.isConfirmed) {
       try {
         await axios.delete(
-          `http://localhost:5000/api/demandes/supprimerDemandePaiement/${id}`
+          `${API_URL}/api/demandes/deleteDemandePaiement/${id}`
         );
         Swal.fire("Supprimée !", "La demande a été supprimée.", "success");
         navigate("/listeDemandes");
@@ -63,6 +64,11 @@ const DemandeDetail = () => {
   if (!demande) return <p>Aucune demande trouvée.</p>;
 
   return (
+    <>
+      <PageMeta
+        title={`Détail de la Demande #${demande.id}`}
+        description="Détails de la demande de paiement"
+      />
     <div className="max-w-5xl mx-auto p-6">
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
         Détail de la Demande #{demande.id}
@@ -190,6 +196,7 @@ const DemandeDetail = () => {
           </div>
         )}
     </div>
+    </>
   );
 };
 

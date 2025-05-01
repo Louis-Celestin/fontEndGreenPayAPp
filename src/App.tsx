@@ -23,6 +23,7 @@ import Section from "./pages/Dashboard/Section.jsx";
 import Ref from "./pages/Dashboard/Ref.jsx";
 import Reg from "./pages/Dashboard/Reg.jsx";
 import Entite from "./pages/Dashboard/Entite.jsx";
+import ChangePassword from "./pages/PasswordHandle/ChangePassword.jsx";
 
 export default function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("role")?.trim().toLowerCase() || "");
@@ -39,13 +40,20 @@ export default function App() {
     };
   }, []);
 
-  const roleRoutes = {
+  const roleRoutes: { [key: string]: string } = { 
     agent: "/agent",
     "responsable de section": "/section",
     "responsable d'entité": "/entite",
     "responsable entité financière": "/ref",
     "responsable entité générale": "/reg",
-  };
+  }
+  // const roleRoutes = {
+  //   agent: "/agent",
+  //   "responsable de section": "/section",
+  //   "responsable d'entité": "/entite",
+  //   "responsable entité financière": "/ref",
+  //   "responsable entité générale": "/reg",
+  // };
 
   return (
     <Router>
@@ -56,6 +64,7 @@ export default function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/password/reset-password" element={<ForgotPassword />} />
         <Route path="/password/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/password/change-password" element={<ChangePassword />} />
 
         {/* ✅ Routes protégées avec AuthGuard */}
         <Route element={<AuthGuard />}>

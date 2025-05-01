@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
 import axios from "axios";
 import { ClipLoader } from "react-spinners"; // ✅ Loader visuel
+import PageMeta from "../../components/common/PageMeta";
+import API_URL from "../../config/url"; // ✅ URL de l'API
 
 const DemandeDetail = () => {
   const { demande_id } = useParams();
@@ -18,7 +20,7 @@ const DemandeDetail = () => {
   useEffect(() => {
     const fetchDemandeDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/demandes/getDemandePaiementById/${demande_id}`);
+        const response = await axios.get(`${API_URL}/demandes/getDemandePaiementById/${demande_id}`);
         setDemande(response.data.demande);
       } catch (err) {
         setError("Erreur lors du chargement de la demande.");
@@ -78,6 +80,8 @@ const DemandeDetail = () => {
   if (!demande) return <p>Aucune demande trouvée.</p>;
 
   return (
+    <>
+      <PageMeta title="Détail de la validation"/>
     <div className="relative max-w-5xl mx-auto p-6">
       {actionLoading && (
         <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
@@ -128,6 +132,7 @@ const DemandeDetail = () => {
         <Button variant="danger" onClick={handleRejet}>❌ Rejeter</Button>
       </div>
     </div>
+    </>
   );
 };
 

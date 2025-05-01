@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCheckCircle, FaTimesCircle, FaInfo } from "react-icons/fa";
 import API_URL from "../../config/url";
+import PageMeta from "../../components/common/PageMeta";
 
 export default function ValidationsDone() {
   const [validations, setValidations] = useState([]);
@@ -118,6 +119,11 @@ export default function ValidationsDone() {
   ];
 
   return (
+    <>
+      <PageMeta
+        title="Liste des validations effectuées"
+        description="Liste des validations effectuées par l'utilisateur"
+      />
     <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-50 shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Liste des validations effectuées
@@ -187,5 +193,6 @@ export default function ValidationsDone() {
         responsive
       />
     </div>
+    </>
   );
 }

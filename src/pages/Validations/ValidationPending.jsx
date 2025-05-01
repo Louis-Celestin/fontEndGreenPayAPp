@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FaCheck, FaTimesCircle, FaInfo } from "react-icons/fa";
 import { getDemandesEnAttente, validerDemande, rejeterDemande } from "../../services/validationsServices/validationServices";
 import { ClipLoader } from "react-spinners"; // ✅ Ajout du loader
+import PageMeta from "../../components/common/PageMeta";
 
 export default function ValidationsPending() {
   const [demandes, setDemandes] = useState([]);
@@ -131,6 +132,8 @@ export default function ValidationsPending() {
   ];
 
   return (
+    <>
+      <PageMeta title="Demandes en attente de validation" description="Liste des demandes en attente de validation" />
     <div className="relative max-w-6xl mx-auto mt-10 p-6 bg-white shadow rounded">
       {actionLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-50">
@@ -197,5 +200,6 @@ export default function ValidationsPending() {
         responsive
       />
     </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { getDemandeById, updateDemande } from "../../services/demandesServices/d
 import { effectuerPaiement } from "../../services/paiemntsServices/paiementsServices";
 import PreuvesPaiementModal from "../../components/ui/modal/PreuvesPaiementModal";
 import { ClipLoader } from "react-spinners"; // ✅ Ajout react-spinners pour loader
+import PageMeta from "../../components/common/PageMeta";
 
 export default function DemandeEdit() {
   const { id } = useParams();
@@ -102,6 +103,8 @@ export default function DemandeEdit() {
   if (!demande) return <p>Aucune demande trouvée</p>;
 
   return (
+    <>
+      <PageMeta title="Modifier la demande" description="Modifier les détails de la demande" />
     <div className="max-w-3xl mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Modifier la demande #{id}</h2>
       <form onSubmit={handleSubmit}>
@@ -198,5 +201,6 @@ export default function DemandeEdit() {
         />
       )}
     </div>
+    </>
   );
 }

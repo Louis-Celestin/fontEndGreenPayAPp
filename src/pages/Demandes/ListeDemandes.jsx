@@ -7,6 +7,7 @@ import { FaEdit, FaTrash, FaInfo, FaPrint } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { telechargerPDF } from "../../services/paiemntsServices/paiementsServices";
+import PageMeta from "../../components/common/PageMeta";
 
 // ✅ Définition des colonnes du DataTable
 // const columns = (handleDelete, navigate) => [
@@ -285,6 +286,8 @@ export default function ListeDemandes() {
   };
 
   return (
+    <>
+      <PageMeta title="Liste des demandes d'achats" description="Consulter toutes les demandes de paiement" />
     <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Liste des demandes de paiement
@@ -368,5 +371,6 @@ export default function ListeDemandes() {
         responsive
       />
     </div>
+    </>
   );
 }

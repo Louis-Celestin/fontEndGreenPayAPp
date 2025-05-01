@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Chart from "react-apexcharts";
 import API_URL from "../../config/url";
+import PageMeta from "../../components/common/PageMeta";
 
 export default function DashboardResponsableSection() {
   const [stats, setStats] = useState(null);
@@ -47,6 +48,11 @@ export default function DashboardResponsableSection() {
   ];
 
   return (
+    <>
+      <PageMeta
+        title="GreenPay | Tableau de bord - Responsable de Section"
+        description="This is the dashboard page for the section manager in the GreenPay application."
+      />
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Tableau de bord - Responsable de Section
@@ -97,4 +103,5 @@ export default function DashboardResponsableSection() {
         </div>
       </div>
     </div>
+    </>
   );}

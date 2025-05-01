@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authServices/Authervices.jsx";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import {  EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import { ClipLoader } from "react-spinners"; // ✅ Ajout du loader
+import PageMeta from "../../components/common/PageMeta";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,6 +76,9 @@ export default function SignInForm() {
   };
 
   return (
+    <>
+    <PageMeta title="Connexion" description="Page de connexion" />
+    {/* Loader de la page */}
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto"></div>
 
@@ -109,7 +113,6 @@ export default function SignInForm() {
                     placeholder="info@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                   />
                 </div>
 
@@ -123,7 +126,7 @@ export default function SignInForm() {
                       placeholder="Mot de passe"
                       value={mot_de_passe}
                       onChange={(e) => setPassword(e.target.value)}
-                      required
+                      
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -159,5 +162,6 @@ export default function SignInForm() {
         </div>
       </div>
     </div>
+    </>
   );
 }

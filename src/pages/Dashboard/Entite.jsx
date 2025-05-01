@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Chart from "react-apexcharts";
 import API_URL from "../../config/url";
+import PageMeta from "../../components/common/PageMeta";
 
 export default function DashboardResponsableEntite() {
   const [stats, setStats] = useState(null);
@@ -44,6 +45,11 @@ export default function DashboardResponsableEntite() {
   ];
 
   return (
+    <>
+      <PageMeta
+        title="GreenPay | Tableau de bord - Responsable d'Entité"
+        description="This is the dashboard page for the entity manager in the GreenPay application."
+      />
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Tableau de bord - Responsable d'Entité
@@ -94,5 +100,6 @@ export default function DashboardResponsableEntite() {
         </div>
       </div>
     </div>
+    </>
   );
 }

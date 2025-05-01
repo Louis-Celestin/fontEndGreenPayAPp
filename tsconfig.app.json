@@ -7,6 +7,11 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    /* Compatibilité fichiers JS/JSX */
+    "allowJs": true,
+    "checkJs": false,
+    "noImplicitAny": false,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -16,11 +21,11 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "src/types"]
 }

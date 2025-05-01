@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { effectuerPaiement, reporterPaiement } from "../../services/paiemntsServices/paiementsServices";
 import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
+import PageMeta from "../../components/common/PageMeta";
+import API_URL from "../../config/url";
 
 export default function PaiementDetail() {
   const { demande_id } = useParams();
@@ -12,7 +14,7 @@ export default function PaiementDetail() {
   useEffect(() => {
     const fetchDemandeDetail = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/demandes/getDemandePaiementById/${demande_id}`);
+        const response = await fetch(`${API_URL}/demandes/getDemandePaiementById/${demande_id}`);
         const data = await response.json();
         setDemande(data.demande);
       } catch (error) {
@@ -28,6 +30,8 @@ export default function PaiementDetail() {
   if (!demande) return <p>Aucune demande trouvée.</p>;
 
   return (
+    <>
+      <PageMeta title={`Détails du paiement #${demande.id}`} />
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Détails de la Demande #{demande.id}</h2>
       <p><strong>Montant:</strong> {demande.montant} FCFA</p>
@@ -38,5 +42,6 @@ export default function PaiementDetail() {
         <Button variant="danger" onClick={() => reporterPaiement(demande.id, "Manque de fonds")}>⏳ Reporter</Button>
       </div>
     </div>
+    </>
   );
 }

@@ -7,6 +7,7 @@ import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
 import FileUpload from "../../components/form/input/FileInput";
 import { ClipLoader } from "react-spinners"; // ✅ Utilisation de react-spinners directement
+import PageMeta from "../../components/common/PageMeta";
 
 export default function CreateDemande() {
   const navigate = useNavigate();
@@ -55,6 +56,8 @@ export default function CreateDemande() {
   };
 
   return (
+    <>
+      <PageMeta title="Créer une demande d'achat" description="Formulaire de création de demande de paiement" />
     <div className="relative max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       {/* Loader en overlay si loading */}
       {loading && (
@@ -64,7 +67,7 @@ export default function CreateDemande() {
       )}
 
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
-        Créer une demande de paiement
+        Créer une demande d'achat
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -124,5 +127,6 @@ export default function CreateDemande() {
         </div>
       </form>
     </div>
+    </>
   );
 }

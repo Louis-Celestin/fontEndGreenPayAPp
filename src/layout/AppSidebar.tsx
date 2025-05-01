@@ -1,19 +1,31 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Correction : 'react-router' => 'react-router-dom'
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-// Import des icônes
 import { GridIcon, PageIcon, ChevronDownIcon } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
 
-// Fonction pour récupérer le rôle de l'utilisateur connecté
-const getUserRole = () => {
-  return localStorage.getItem("role") || "Agent"; // Par défaut "Agent"
+// 🔹 Types
+interface SubItem {
+  name: string;
+  path: string;
+}
+
+interface NavItem {
+  icon: React.ReactElement;
+  name: string;
+  path?: string;
+  subItems?: SubItem[];
+}
+
+// Fonction pour récupérer le rôle
+const getUserRole = (): string => {
+  return localStorage.getItem("role") || "Agent";
 };
 
 // Fonction pour filtrer les éléments du menu selon le rôle
-const getNavItemsByRole = (role) => {
-  let menu = [{ icon: <GridIcon />, name: "Dashboard", path: "/" }];
+const getNavItemsByRole = (role: string): NavItem[] => {
+  let menu: NavItem[] = [{ icon: <GridIcon />, name: "Dashboard", path: "/" }];
 
   if (
     [
@@ -35,12 +47,7 @@ const getNavItemsByRole = (role) => {
   }
 
   if (
-    [
-      "responsable de section",
-      "responsable d'entité",
-      // "Responsable Entité Financière",
-      // "responsable entité générale",
-    ].includes(role)
+    ["responsable de section", "responsable d'entité"].includes(role)
   ) {
     menu.push({
       name: "Validations",
@@ -52,50 +59,32 @@ const getNavItemsByRole = (role) => {
     });
   }
 
-  // if (["responsable entité financière"].includes(role)) {
-  //   menu.push(
-  //     {
-  //       name: "Paiements",
-  //       icon: <PageIcon />,
-  //       subItems: [
-  //         { name: "Liste de paiements", path: "/listePaiements" },
-  //         { name: "Paiements effectués", path: "/paiementsDone" },
-  //       ],
-  //     },
-  //   );
-  // }
-
   return menu;
 };
 
 const AppSidebar = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
-  const [role, setRole] = useState(getUserRole()); // Récupération du rôle
+  const [role] = useState(getUserRole());
   const navItems = getNavItemsByRole(role);
+  const [openSubmenus, setOpenSubmenus] = useState<Record<number, boolean>>({});
 
-  // 🔹 Stocke quel sous-menu est ouvert
-  const [openSubmenus, setOpenSubmenus] = useState({});
-
-  // Fonction pour savoir si un lien est actif
   const isActive = useCallback(
-    (path) => location.pathname === path,
+    (path: string) => location.pathname === path,
     [location.pathname]
   );
 
-  // Fonction pour gérer l'ouverture/fermeture d'un sous-menu
-  const handleSubmenuToggle = (index) => {
+  const handleSubmenuToggle = (index: number) => {
     setOpenSubmenus((prev) => ({
       ...prev,
-      [index]: !prev[index], // Inverse l'état actuel du sous-menu
+      [index]: !prev[index],
     }));
   };
 
   useEffect(() => {
-    // Au chargement, ouvrir uniquement le sous-menu contenant la page actuelle
-    const activeSubmenus = {};
+    const activeSubmenus: Record<number, boolean> = {};
     navItems.forEach((nav, index) => {
-      if (nav.subItems) {
+      if (Array.isArray(nav.subItems)) {
         nav.subItems.forEach((subItem) => {
           if (isActive(subItem.path)) {
             activeSubmenus[index] = true;
@@ -142,12 +131,13 @@ const AppSidebar = () => {
           />
         </Link>
       </div>
+
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <ul className="flex flex-col gap-4">
             {navItems.map((nav, index) => (
               <li key={nav.name}>
-                {nav.subItems ? (
+                {Array.isArray(nav.subItems) ? (
                   <button
                     onClick={() => handleSubmenuToggle(index)}
                     className={`menu-item group ${
@@ -178,16 +168,16 @@ const AppSidebar = () => {
                   </button>
                 ) : (
                   <Link
-                    to={nav.path}
+                    to={nav.path!}
                     className={`menu-item group ${
-                      isActive(nav.path)
+                      isActive(nav.path!)
                         ? "menu-item-active"
                         : "menu-item-inactive"
                     }`}
                   >
                     <span
                       className={`menu-item-icon-size ${
-                        isActive(nav.path)
+                        isActive(nav.path!)
                           ? "menu-item-icon-active"
                           : "menu-item-icon-inactive"
                       }`}
@@ -199,7 +189,7 @@ const AppSidebar = () => {
                     )}
                   </Link>
                 )}
-                {nav.subItems &&
+                {Array.isArray(nav.subItems) &&
                   (isExpanded || isHovered || isMobileOpen) &&
                   openSubmenus[index] && (
                     <ul className="mt-2 space-y-1 ml-9">
@@ -223,7 +213,8 @@ const AppSidebar = () => {
             ))}
           </ul>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+
+        {(isExpanded || isHovered || isMobileOpen) && <SidebarWidget />}
       </div>
     </aside>
   );

@@ -6,6 +6,7 @@ import Label from "../../components/form/Label.js";
 import Input from "../../components/form/input/InputField.js";
 import Button from "../../components/ui/button/Button.js";
 import { ClipLoader } from "react-spinners"; // ✅ Ajout loader
+import PageMeta from "../../components/common/PageMeta";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -32,6 +33,9 @@ export default function ForgotPassword() {
   };
 
   return (
+    <>
+      <PageMeta title="Mot de passe oublié" description="Réinitialisez votre mot de passe" />
+
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto">
         <button
@@ -39,7 +43,7 @@ export default function ForgotPassword() {
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon className="size-5" />
-          Retour connexion
+          Retour à la connexion
         </button>
       </div>
 
@@ -87,5 +91,6 @@ export default function ForgotPassword() {
         </div>
       </div>
     </div>
+    </>
   );
 }

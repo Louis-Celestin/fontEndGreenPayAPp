@@ -4,6 +4,7 @@ import { getPaiementsEnAttente, effectuerPaiement, reporterPaiement } from "../.
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import Button from "../../components/ui/button/Button";
+import PageMeta from "../../components/common/PageMeta";
 
 export default function ListePaiements() {
   const [paiements, setPaiements] = useState([]);
@@ -122,10 +123,14 @@ const handlePaiement = async (id) => {
   ];
 
   return (
+    <>
+    <PageMeta title="Liste des paiements" description="Liste des paiements en attente" />
     <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Demandes en attente de paiement</h2>
       <DataTable columns={columns} data={paiements} progressPending={loading} pagination highlightOnHover striped responsive paginationPerPage={5}
         paginationTotalRows={paiements.length}/>
     </div>
+    
+    </>
   );
 }

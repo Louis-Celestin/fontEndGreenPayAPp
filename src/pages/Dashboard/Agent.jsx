@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Chart from "react-apexcharts";
 import API_URL from "../../config/url";
+import PageMeta from "../../components/common/PageMeta";
 
 export default function DashboardAgent() {
   const [stats, setStats] = useState(null);
@@ -47,6 +48,11 @@ export default function DashboardAgent() {
   ];
 
   return (
+    <>
+          <PageMeta
+            title="GreenPay | Gestion de demandes d'achats"
+            description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+          />
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Tableau de bord - Agent
@@ -97,5 +103,6 @@ export default function DashboardAgent() {
         </div>
       </div>
     </div>
+    </>
   );
 }

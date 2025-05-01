@@ -59,3 +59,18 @@ export const resetPassword = async (token, mot_de_passe) => {
     throw error.response?.data?.message || "Erreur lors de la réinitialisation du mot de passe";
   }
 };
+
+// ✅ Fonction pour changer le mot de passe de l'utilisateur connecté
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.patch(
+      `${API_URL}/auth/update-password`,
+      { ancien_mot_de_passe : currentPassword, nouveau_mot_de_passe : newPassword },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data; // Renvoie le message de confirmation
+  } catch (error) {
+    throw error.response?.data?.message || "Erreur lors du changement de mot de passe";
+  }
+};

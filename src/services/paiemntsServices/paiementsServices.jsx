@@ -196,7 +196,7 @@ export const validerPaiement = async (demande_id) => {
 export const telechargerPDF = async (demande_id) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${API_URL}/download-pdf/${demande_id}`, {
+    const response = await axios.get(`${API_URL}/paiements/download-pdf/${demande_id}`, {
       responseType: "blob",
       headers: { Authorization: `Bearer ${token}` },
     });
